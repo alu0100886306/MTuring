@@ -43,45 +43,29 @@ public class Estado {
 		return id;
 	}
 
-	public boolean transita(String string, Stack<String> pila, String traza, boolean see) {
+	public void transita(String string, int index, String traza, boolean see) {
 		
-		if (pila.empty() && string.isEmpty()) {
-			if (see) System.out.println("Cadena aceptada");
-			return true;
-		}
+		if (see) System.out.println(string + " i:" + index + " q:" + id);
 		
-		boolean result = false;
 		boolean no_trans = true;
 		for (Transicion t : trans) {
-			if (t.accept('.', pila.peek())) {
+			if (t.accept(string.charAt(index))) {
 				no_trans = false;
-				result = result || t.getNewEstado().transita(
-						t.newString(new String(string)), 
-						t.newPila((Stack)pila.clone()), 
-						traza + ".," + pila.peek() + "->" + t.getNewEstado().getId()+ t.newPila((Stack)pila.clone()).toString() + " ",
+				t.getNewEstado().transita(
+						t.newString(new String(string),index), 
+						t.newIndex(index), 
+						traza + string.charAt(index) + "," + t.val_out + "," + t.move + "->" + t.getNewEstado().getId() + " ",
 						see);
 			}
-			else if (!string.isEmpty() && t.accept(string.charAt(0), pila.peek())) {
-				no_trans = false;
-				result = result || t.getNewEstado().transita(
-						t.newString(new String(string)), 
-						t.newPila((Stack)pila.clone()), 
-						traza + string.charAt(0) + "->" + t.getNewEstado().getId()+ t.newPila((Stack)pila.clone()).toString() + " ",
-						see);
-			}
-		}
-		
-		if (string.length()==0 || pila.empty() || no_trans) {
+		}		
+		if (no_trans) {
 			if (see) System.out.println(traza);
 			if (accept) {
-				if (see) System.out.println("Cadena aceptada");
-				return true;
+				System.out.println("Cadena aceptada");
 			}
 			else {
-				if (see) System.out.println("Cadena Rechazada");
-				return result;
+				System.out.println("Cadena Rechazada");
 			}
 		}
-		return result;
 	}
 }

@@ -6,52 +6,59 @@ import java.util.Stack;
 public class Transicion {
 
 	String val_in;
-	String cinta_in;
+	String val_out;
 	Estado est_f;
-	String cinta_out;
+	String move;
+	static String blanco = ".";
 	
-	public Transicion(String val_in, String cinta_in, Estado est_f, String[] cinta_out) {
+	public Transicion(String val_in, String val_out, Estado est_f, String move) {
 		this.val_in = val_in;
-		this.cinta_in = cinta_in;
+		this.val_out = val_out;
 		this.est_f = est_f;
-		this.cinta_out = cinta_out;	
+		this.move = move;	
 	}
 	public Transicion(Transicion t) {
 		this.val_in = t.val_in;
-		this.cinta_in = t.cinta_in;
+		this.val_out = t.val_out;
 		this.est_f = t.est_f;
-		this.cinta_out = t.cinta_out;	
+		this.move = t.move;	
 	}
 	public void show() {
-		System.out.print("  " + val_in + " " + cinta_in + " " + est_f.getId() + " [ ");
-		for (String str : cinta_out)
-			System.out.print(str + " ");
-		System.out.print("]\n");
+		System.out.println("  " + val_in + " " + est_f.getId() + " " + val_out + " " + move);
 	}
 
-	public boolean accept(char in, String peek) {
-		if ((val_in.equals(""+in) || val_in.equals(".")) && (cinta_in.equals(peek) || cinta_in.equals(".")))
-			return true;
-		return false;
+	public boolean accept(char in) {
+		return val_in.equals(""+in);
 	}
 
 	public Estado getNewEstado() {
 		return est_f;
 	}
+	
+	public String newString(String str, int index) {
 
-	public Stack<String> newPila(Stack<String> pila) {
-		if (!cinta_in.equals("."))
-			pila.pop();
-		Stack<String> aux = new Stack<String>();
-		for (int i = cinta_out.length-1;i>=0;i--)
-			pila.push(cinta_out[i]);
-		return pila;
+		if (newIndex(index) > str.length()-1)
+			str += blanco;
+		if (index == 0) {
+			str = blanco+str;
+			index++;
+		}
+		String f = str.substring(0, index);
+		String s = str.substring(index+1, str.length());
+		return f + val_out + s;
 	}
 	
-	public String newString(String str) {
-		if (val_in.equals("."))
-			return str;
-		return str.substring(1);
-	}
+	public int newIndex(int index) {
 
+		switch(move) {
+		case "R":
+			return index+1;
+		case "L":
+			if (index-1 < 0)
+				return 0;
+			return index-1;
+		}
+		
+		return index;
+	}
 }
